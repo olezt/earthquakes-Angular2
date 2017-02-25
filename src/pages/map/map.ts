@@ -265,7 +265,7 @@ export class MapPage {
         controlText.style.lineHeight = '25px';
         controlText.style.paddingLeft = '5px';
         controlText.style.paddingRight = '5px';
-        controlText.innerHTML = '<ion-icon name="refresh-circle"></ion-icon>';
+        controlText.innerHTML = '<i class="fa fa-refresh" aria-hidden="true"></i>';
         controlUI.appendChild(controlText);
 
         controlUI.addEventListener('click', function() {
