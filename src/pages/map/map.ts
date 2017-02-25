@@ -96,10 +96,8 @@ export class MapPage {
       var dynamicBounds = JSON.stringify(MapPage.currentBounds);
       MapPage.fittingBounds =JSON.parse(dynamicBounds);
       apiUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=100&start=' + startTime+'&minlat='+MapPage.fittingBounds.south+'&maxlat='+MapPage.fittingBounds.north+'&minlon='+MapPage.fittingBounds.west+'&maxlon='+MapPage.fittingBounds.east+'&minmag=' + MapPage.minMag +'&format=json';
-        console.log("not static "+apiUrl);
     }else{
       apiUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=1000&start=' + startTime+'&minlat='+Constants.STATIC_BOUNDS_SOUTH+'&maxlat='+Constants.STATIC_BOUNDS_NORTH+'&minlon='+Constants.STATIC_BOUNDS_WEST+'&maxlon='+Constants.STATIC_BOUNDS_EAST+'&minmag=' + MapPage.minMag +'&format=json';
-        console.log("static"+apiUrl);
     }
     return apiUrl;
   }
@@ -196,7 +194,6 @@ export class MapPage {
       google.maps.event.addListener(MapPage.map, 'bounds_changed', function() {
           try {
               MapPage.currentBounds = MapPage.map.getBounds();
-              console.log(MapPage.currentBounds);
           } catch( err ) {
               alert( err );
           }
