@@ -4,8 +4,6 @@ import { Ng2MapComponent } from 'ng2-map';
 import { NavController } from 'ionic-angular';
 import {Constants} from '../../app/constants';
 import {LocalStorage} from "angular2-localstorage";
-//import { Router, NavigationStart } from '@angular/router';
-
 
 @Component({
   selector: 'page-map',
@@ -32,22 +30,15 @@ export class MapPage {
   public static SOUTH = 34.284733;
   public static WEST = 18.748591;
   
+  ionViewDidEnter() {
+    if(MapPage.map){
+      MapPage.setBounds();
+      MapPage.refreshData(false);
+    }
+  }
   
-  constructor(public navCtrl: NavController) {//, public router: Router
+  constructor(public navCtrl: NavController) {
     Ng2MapComponent['apiUrl'] = 'https://maps.google.com/maps/api/js?key=AIzaSyC1RlpsPiVY1X4AR5l2xPKD3A9bRkf3oq4';
-
-      Observable.merge(
-                 navCtrl.viewDidLoad,
-                 navCtrl.viewWillEnter, 
-                 navCtrl.viewDidEnter, 
-                 navCtrl.viewWillLeave, 
-                 navCtrl.viewDidLeave, 
-                 navCtrl.viewWillUnload);
-
-//     router.events.subscribe((val) => {
-//        // see also 
-//        console.log("yeeei");
-//    });
   }
 
   @ViewChild(Ng2MapComponent) ng2MapComponent: Ng2MapComponent;
@@ -64,7 +55,7 @@ export class MapPage {
       map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(MapPage.refreshDiv);
     })
   }
-
+  
     private static initMap() {
       MapPage.addBoundsListener();
       MapPage.fitBounds();
@@ -106,11 +97,9 @@ export class MapPage {
       MapPage.fittingBounds =JSON.parse(dynamicBounds);
       apiUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=100&start=' + startTime+'&minlat='+MapPage.fittingBounds.south+'&maxlat='+MapPage.fittingBounds.north+'&minlon='+MapPage.fittingBounds.west+'&maxlon='+MapPage.fittingBounds.east+'&minmag=' + MapPage.minMag +'&format=json';
         console.log("not static "+apiUrl);
-    
     }else{
       apiUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=1000&start=' + startTime+'&minlat='+Constants.STATIC_BOUNDS_SOUTH+'&maxlat='+Constants.STATIC_BOUNDS_NORTH+'&minlon='+Constants.STATIC_BOUNDS_WEST+'&maxlon='+Constants.STATIC_BOUNDS_EAST+'&minmag=' + MapPage.minMag +'&format=json';
         console.log("static"+apiUrl);
-    
     }
     return apiUrl;
   }
