@@ -3,6 +3,7 @@ import {Observable} from 'rxjs/Rx';
 import { Ng2MapComponent } from 'ng2-map';
 import { NavController } from 'ionic-angular';
 import {Constants} from '../../app/constants';
+import {LocalStorage, SessionStorage} from "angular2-localstorage";
 
 @Component({
   selector: 'page-map',
@@ -19,10 +20,12 @@ export class MapPage {
   public static isOnline;
   public mapHeight = window.innerHeight -55.99 + "px";
   public static blinkInterval;
+  @LocalStorage() public static minMag:number = 0;
+  @LocalStorage() public static lastHours:number = 48; 
   
   constructor(public navCtrl: NavController) {
     Ng2MapComponent['apiUrl'] = 'https://maps.google.com/maps/api/js?key=AIzaSyC1RlpsPiVY1X4AR5l2xPKD3A9bRkf3oq4';
-    
+
       var allEvents = Observable.merge(
                  navCtrl.viewDidLoad,
                  navCtrl.viewWillEnter, 
@@ -102,24 +105,28 @@ export class MapPage {
   }
   
   public static calculateApiUrl(init: boolean) {
-    //var startTime = MapPage.calculateTimeRequest();
+    var startTime = MapPage.calculateTimeRequest();
     var apiUrl;
     if(!init && MapPage.currentBounds){
       var dynamicBounds = JSON.stringify(MapPage.currentBounds);
       MapPage.fittingBounds =JSON.parse(dynamicBounds);
-      apiUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=100&minlat='+MapPage.fittingBounds.south+'&maxlat='+MapPage.fittingBounds.north+'&minlon='+MapPage.fittingBounds.west+'&maxlon='+MapPage.fittingBounds.east+'&format=json';
+      apiUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=100&start=' + startTime+'&minlat='+MapPage.fittingBounds.south+'&maxlat='+MapPage.fittingBounds.north+'&minlon='+MapPage.fittingBounds.west+'&maxlon='+MapPage.fittingBounds.east+'&minmag=' + MapPage.minMag +'&format=json';
+        console.log("not static "+apiUrl);
+    
     }else{
-      apiUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=1000&=&minlat='+Constants.STATIC_BOUNDS_SOUTH+'&maxlat='+Constants.STATIC_BOUNDS_NORTH+'&minlon='+Constants.STATIC_BOUNDS_WEST+'&maxlon='+Constants.STATIC_BOUNDS_EAST+'&format=json';
+      apiUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=1000&start=' + startTime+'&minlat='+Constants.STATIC_BOUNDS_SOUTH+'&maxlat='+Constants.STATIC_BOUNDS_NORTH+'&minlon='+Constants.STATIC_BOUNDS_WEST+'&maxlon='+Constants.STATIC_BOUNDS_EAST+'&minmag=' + MapPage.minMag +'&format=json';
+        console.log("static"+apiUrl);
+    
     }
     return apiUrl;
   }
-//
-//  public static calculateTimeRequest() {
-//    var date = new Date();
-//    date.setHours(date.getHours() - SettingsService.getHours() + 2);
-//    return date.toJSON();
-//  }
-//
+
+  public static calculateTimeRequest() {
+    var date = new Date();
+    date.setHours(date.getHours() - MapPage.lastHours + 2);
+    return date.toJSON();
+  }
+
   private static createInfoWindows() {
     var infowindow = new google.maps.InfoWindow();
 //    var magTranslation;

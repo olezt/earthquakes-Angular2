@@ -1,28 +1,17 @@
 <ion-content class="padding">
-        <ion-list>
+
+
+	<ion-list>
+      	<ion-item>
+      		<ion-label>Range: {{minMag}} </ion-label> 
+          	<ion-range dualKnobs="false" [(ngModel)]="minMag" min="0" max="10" step="1" snaps="true"></ion-range> 
+      	</ion-item>
       
-      	   <ion-item>
-       
-          <ion-input>
-    	<ion-label>lang:</ion-label>
-  <ion-select [(ngModel)]="lang" ng-init="initLang()" (ngModelChange)="updateLang($event.target.value)">
-    <ion-option value="en" selected="true">English</ion-option>
-    <ion-option value="gr">Greek</ion-option>
-  </ion-select>
-    	
-    	</ion-input>			   
-      </ion-item>
-      
-      <ion-item>
-          <ion-label>range:</ion-label>
-          <ion-range dualKnobs="false" [(ngModel)]="range" (ngModelChange)="updateRange(range)" 
-          min="0" max="10" step="1" snaps="true"></ion-range>          
-      </ion-item>
-      
-      <ion-item>
-           <ion-label>hours:</ion-label>
-           <ion-range min="1" max="48" step="2" [(ngModel)]="hours" (ngModelChange)="updateHours(hours)"></ion-range>
-      </ion-item>
-      
-    </ion-list>
-  </ion-content>
+      	<ion-item>
+           	<ion-label>Hours: {{lastHours}}</ion-label>
+           	<ion-range min="1" max="48" step="2" [(ngModel)]="lastHours"></ion-range>
+      	</ion-item>      
+	</ion-list>
+	
+	
+</ion-content>
