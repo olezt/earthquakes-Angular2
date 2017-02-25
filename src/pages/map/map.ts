@@ -3,7 +3,9 @@ import {Observable} from 'rxjs/Rx';
 import { Ng2MapComponent } from 'ng2-map';
 import { NavController } from 'ionic-angular';
 import {Constants} from '../../app/constants';
-import {LocalStorage, SessionStorage} from "angular2-localstorage";
+import {LocalStorage} from "angular2-localstorage";
+//import { Router, NavigationStart } from '@angular/router';
+
 
 @Component({
   selector: 'page-map',
@@ -20,39 +22,34 @@ export class MapPage {
   public static isOnline;
   public mapHeight = window.innerHeight -55.99 + "px";
   public static blinkInterval;
+  public static refreshDiv;
   @LocalStorage() public static minMag:number = 0;
   @LocalStorage() public static lastHours:number = 48; 
   
-  constructor(public navCtrl: NavController) {
+  //Declare Greece bounds constants
+  public static NORTH = 42.927336;
+  public static EAST = 28.726044;
+  public static SOUTH = 34.284733;
+  public static WEST = 18.748591;
+  
+  
+  constructor(public navCtrl: NavController) {//, public router: Router
     Ng2MapComponent['apiUrl'] = 'https://maps.google.com/maps/api/js?key=AIzaSyC1RlpsPiVY1X4AR5l2xPKD3A9bRkf3oq4';
 
-      var allEvents = Observable.merge(
+      Observable.merge(
                  navCtrl.viewDidLoad,
                  navCtrl.viewWillEnter, 
                  navCtrl.viewDidEnter, 
                  navCtrl.viewWillLeave, 
                  navCtrl.viewDidLeave, 
                  navCtrl.viewWillUnload);
-    
-    
-    
-      //console.log(this.mapHeight);
-//      allEvents.subscribe((e) => {
-//        console.log(e);
-//        //this.setBounds();
-//      });
-    
-//  allEvents.subscribe((val) => {
-//      //if ($location.url() == '/app/map') {
-//          this.setBounds(this.map);
-//      //}
-//      console.log('route change');
+
+//     router.events.subscribe((val) => {
+//        // see also 
+//        console.log("yeeei");
 //    });
-  
   }
 
-
-  
   @ViewChild(Ng2MapComponent) ng2MapComponent: Ng2MapComponent;
   public static map: google.maps.Map;
   
@@ -60,21 +57,18 @@ export class MapPage {
       this.ng2MapComponent.mapReady$.subscribe(map => {
       MapPage.map = map;
       MapPage.initMap();
-//      this.addBoundsListener();      
-//      //this.fitBounds();
-//      this.refreshData(true);
-//      //firstLoadSuccess = true;
       
-      
+      MapPage.refreshDiv = document.createElement('div');
+      new MapPage.CenterControl(MapPage.refreshDiv, map);
+      MapPage.refreshDiv.index = 1;
+      map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(MapPage.refreshDiv);
     })
   }
 
     private static initMap() {
-      //addAdMob();
       MapPage.addBoundsListener();
-      //this.fitBounds();
+      MapPage.fitBounds();
       MapPage.refreshData(true);
-     // MapPage.firstLoadSuccess = true;
   }
   
   private static refreshData(init:boolean){
@@ -228,14 +222,14 @@ export class MapPage {
     return new google.maps.LatLngBounds(sw, ne);
   }
   
-//  public fitBounds(){
-//    var ne = new google.maps.LatLng(STATIC_BOUNDS.NORTH, STATIC_BOUNDS.EAST);
-//      var sw = new google.maps.LatLng(STATIC_BOUNDS.SOUTH, STATIC_BOUNDS.WEST);
-//      var bounds = new google.maps.LatLngBounds(sw, ne);
-//      globalMap.fitBounds(bounds);
-//    globalMap.setZoom(globalMap.getZoom()+1);
-//    drawRectangle(bounds);
-//  }
+  private static fitBounds(){
+      var ne = new google.maps.LatLng(MapPage.NORTH, MapPage.EAST);
+      var sw = new google.maps.LatLng(MapPage.SOUTH, MapPage.WEST);
+      var bounds = new google.maps.LatLngBounds(sw, ne);
+      MapPage.map.fitBounds(bounds);
+      MapPage.map.setZoom(MapPage.map.getZoom()+1);
+      MapPage.drawRectangle(bounds);
+  }
   
   private static drawRectangle(bounds:any){
     if(!MapPage.rectangle){
@@ -259,23 +253,40 @@ export class MapPage {
       MapPage.refreshData(false);
     }
   
-//
-////  public onOffline(){
-////    this.isOnline = false;
-////  }
-////  
-////  public onOnline(map: google.maps.Map){
-////    this.isOnline = true;
-////    if(this.firstLoadSuccess){
-////          this.refreshData(map, false);
-////    }else{
-////      //this.initMap();
-////    }
-////  }
-//    
-//    public addConnectivityListeners(map: google.maps.Map) {
-//      window.addEventListener("online", this.onOnline, false);
-//      window.addEventListener("offline", this.onOffline, false);
-//    }
+      private static CenterControl(controlDiv, map) {
+
+        // Set CSS for the control border.
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = '#fff';
+        controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginBottom = '22px';
+        controlUI.style.textAlign = 'center';
+        controlUI.style.marginRight = '10px';
+        controlUI.style.marginBottom = '0px';
+        controlUI.style.width = '28px';
+        controlUI.style.height = '28px';
+        controlUI.style.opacity = '0.9'
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior.
+        var controlText = document.createElement('div');
+        controlText.style.color = 'rgb(25,25,25)';
+        controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+        controlText.style.fontSize = '16px';
+        controlText.style.lineHeight = '25px';
+        controlText.style.paddingLeft = '5px';
+        controlText.style.paddingRight = '5px';
+        controlText.innerHTML = '<ion-icon name="refresh-circle"></ion-icon>';
+        controlUI.appendChild(controlText);
+
+        controlUI.addEventListener('click', function() {
+          MapPage.setBounds();
+          MapPage.refreshData(false);
+        });
+
+      }
   
 }
