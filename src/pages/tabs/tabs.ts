@@ -7,13 +7,11 @@ import { SettingsPage } from '../settings/settings';
   templateUrl: 'tabs.html'
 })
 export class TabsPage {
-  // this tells the tabs component which Pages
-  // should be each tab's root Page
-  tab1Root: any = MapPage;
-  tab2Root: any = SettingsPage;
-
-  constructor() {
-
-  }
+    // this tells the tabs component which Pages
+    // should be each tab's root Page
+    tab1Root: any = MapPage;
+    tab2Root: any = SettingsPage;
+  
+    constructor() {}
 }
 
