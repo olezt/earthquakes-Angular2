@@ -7,6 +7,7 @@ import { MyApp } from './app.component';
 import { SettingsPage } from '../pages/settings/settings';
 import { MapPage } from '../pages/map/map';
 import { TabsPage } from '../pages/tabs/tabs';
+import { RecentPage } from '../pages/recent/recent';
 import { WebStorageModule } from "angular2-localstorage";
 
 @NgModule({
@@ -14,6 +15,7 @@ import { WebStorageModule } from "angular2-localstorage";
         MyApp,
         SettingsPage,
         MapPage,
+        RecentPage,
         TabsPage
     ],
     imports: [
@@ -28,6 +30,7 @@ import { WebStorageModule } from "angular2-localstorage";
           MyApp,
           SettingsPage,
           MapPage,
+          RecentPage,
           TabsPage
       ],
       providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
