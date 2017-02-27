@@ -20,6 +20,7 @@ export class MapPage {
     public mapHeight = window.innerHeight - 55.99 + "px";
     public static blinkInterval;
     public static refreshDiv;
+    public static infowindow;
     @LocalStorage() public static minMag: number = 0;
     @LocalStorage() public static lastHours: number = 48;
 
@@ -78,12 +79,13 @@ export class MapPage {
     }
   
     private static clearData() {
+        google.maps.event.clearListeners(MapPage.map.data, 'click');
+        MapPage.infowindow = null;
         MapPage.map.data.forEach(function(feature) {
             MapPage.map.data.remove(feature);
         });
         MapPage.recent = [];
         MapPage.blinkInterval = undefined;
-        google.maps.event.clearListeners(MapPage.map.data, 'click');
     }
   
     public static calculateApiUrl(init: boolean) {
@@ -106,18 +108,19 @@ export class MapPage {
     }
   
     private static createInfoWindows() {
-      var infowindow = new google.maps.InfoWindow();
+      MapPage.infowindow = new google.maps.InfoWindow();
       var listenerHandle = MapPage.map.data.addListener('click', function(event) {
           var date = new Date(event.feature.getProperty("time"));
           var mag = event.feature.getProperty("mag");
           var depth = event.feature.getProperty("depth");
-          infowindow.setContent("<div style='width:160px; text-align: left;'>" + date.toDateString() + ", " + date.toLocaleTimeString('en-US', { hour12: false }) + "<br><b>Magnitude:</b> " + mag + " M<br><b>Depth</b>: " + depth + " km</div>");
-          infowindow.setPosition(event.feature.getGeometry().get());
-          infowindow.setOptions({
+          MapPage.infowindow.setContent("<div style='width:160px; text-align: left;'>" + date.toDateString() + ", " + date.toLocaleTimeString('en-US', { hour12: false }) + "<br><b>Magnitude:</b> " + mag + " M<br><b>Depth</b>: " + depth + " km</div>");
+          MapPage.infowindow.setPosition(event.feature.getGeometry().get());
+          MapPage.infowindow.setOptions({
               pixelOffset: new google.maps.Size(0, -5)
           });
-          infowindow.open(MapPage.map);
+          MapPage.infowindow.open(MapPage.map);
       });
+        
     }
   
     private static blinkRecent() {
