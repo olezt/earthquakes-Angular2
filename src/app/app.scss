@@ -20,3 +20,23 @@
 .scroll-content {
     overflow-y: hidden !important;
 }
+
+.tabbar.show-tabbar{
+	background-color: black !important;
+}
+
+.tabs-md .tab-button[aria-selected=true]{
+	color:white !important;
+}
+
+.tabs-md .tab-button{
+	color:#b1a9a9 !important;
+}
+
+.ion:before{
+	color:white !important;
+}
+
+.ion:after{
+	color:gray !important;
+}
