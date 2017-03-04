@@ -13,12 +13,13 @@ import { Earthquake } from './earthquake';
 @Injectable()
 export class RecentService {
     private startTime = this.calculateTimeRequest();
-//  private recentUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=1000&start=' + this.startTime + '&minlat=' + Constants.STATIC_BOUNDS_SOUTH + '&maxlat=' + Constants.STATIC_BOUNDS_NORTH + '&minlon=' + Constants.STATIC_BOUNDS_WEST + '&maxlon=' + Constants.STATIC_BOUNDS_EAST + '&minmag=3&format=json';
-    private recentUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?limit=30&starttime=' + this.startTime + '&minlatitude=' + Constants.STATIC_BOUNDS_SOUTH + '&maxlatitude=' + Constants.STATIC_BOUNDS_NORTH + '&minlongitude=' + Constants.STATIC_BOUNDS_WEST + '&maxlongitude=' + Constants.STATIC_BOUNDS_EAST + '&minmagnitude=3&format=geojson';
+    private recentUrl = 'http://www.seismicportal.eu/fdsnws/event/1/query?limit=1000&start=' + this.startTime + '&minlat=' + Constants.STATIC_BOUNDS_SOUTH + '&maxlat=' + Constants.STATIC_BOUNDS_NORTH + '&minlon=' + Constants.STATIC_BOUNDS_WEST + '&maxlon=' + Constants.STATIC_BOUNDS_EAST + '&minmag=3&format=json';
+//    private recentUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?limit=30&starttime=' + this.startTime + '&minlatitude=' + Constants.STATIC_BOUNDS_SOUTH + '&maxlatitude=' + Constants.STATIC_BOUNDS_NORTH + '&minlongitude=' + Constants.STATIC_BOUNDS_WEST + '&maxlongitude=' + Constants.STATIC_BOUNDS_EAST + '&minmagnitude=3&format=geojson';
 
     constructor (private http: Http) {}
     
     getRecent (): Observable<Earthquake[]> {
+        console.log(this.recentUrl);
         return this.http.get(this.recentUrl)
                     .map(this.extractData);
     }
