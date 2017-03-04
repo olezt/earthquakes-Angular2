@@ -1,18 +1,20 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
+
 import { RecentService } from './recent.service';
 import { Earthquake } from './earthquake';
 
-
 @Component({
     selector: 'page-recent',
-    templateUrl: 'recent.html'
+    templateUrl: 'recent.html',
+    providers: [RecentService]
 })
+    
 export class RecentPage{
         
-    recent: Earthquake[];
+    recentEarthquakes: Earthquake[];
     
-    constructor (private recentService: RecentService) {}
+    constructor (public navCtrl: NavController, private recentService: RecentService) {}
     
     ngOnInit() { 
         this.getRecent(); 
@@ -21,7 +23,7 @@ export class RecentPage{
     getRecent() {
         this.recentService.getRecent()
             .subscribe(
-                recent => this.recent = recent);
+                recentEarthquakes => this.recentEarthquakes = recentEarthquakes);
   }
     
 }

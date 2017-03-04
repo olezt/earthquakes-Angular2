@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { MapPage } from '../map/map';
 import { SettingsPage } from '../settings/settings';
+import { RecentPage } from '../recent/recent';
 
 @Component({
   templateUrl: 'tabs.html'
@@ -11,6 +12,7 @@ export class TabsPage {
     // should be each tab's root Page
     tab1Root: any = MapPage;
     tab2Root: any = SettingsPage;
+    tab3Root: any = RecentPage;
   
     constructor() {}
 }
