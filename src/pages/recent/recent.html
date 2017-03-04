@@ -5,6 +5,7 @@
       	    <ion-badge item-left color="danger">{{earthquake.properties.mag}}</ion-badge>
     		<h3>{{earthquake.properties.flynn_region}}</h3>
       		<p>Time: {{earthquake.properties.time | date: 'dd/MM/yyyy HH:mm'}}</p>
+      		<button ion-button color="danger" outline (click)="showOnMap(earthquake.properties.unid)">View Map</button>
       	</ion-item>    
 	</ion-list>
 	

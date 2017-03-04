@@ -1,8 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { Ng2MapComponent } from 'ng2-map';
-import { NavController } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 import { Constants } from '../../app/constants';
 import { LocalStorage } from "angular2-localstorage";
+import { RecentPage } from '../recent/recent';
+
 
 @Component({
   selector: 'page-map',
@@ -11,6 +13,7 @@ import { LocalStorage } from "angular2-localstorage";
 export class MapPage {
 
     public static recent = [];
+    public static unid;
     public static rectangle;
     public static firstLoadSuccess = false;
     public static fillOpacity = 0.5;
@@ -31,7 +34,10 @@ export class MapPage {
     public static WEST = 18.748591;
 
     ionViewDidEnter() {
+        MapPage.unid = RecentPage.unid;
+        RecentPage.unid = null;
         if (MapPage.map) {
+            console.log(MapPage.unid);
             MapPage.setBounds();
             MapPage.refreshData(false);
         }
@@ -108,19 +114,19 @@ export class MapPage {
     }
   
     private static createInfoWindows() {
-      MapPage.infowindow = new google.maps.InfoWindow();
-      var listenerHandle = MapPage.map.data.addListener('click', function(event) {
-          var date = new Date(event.feature.getProperty("time"));
-          var mag = event.feature.getProperty("mag");
-          var depth = event.feature.getProperty("depth");
-          MapPage.infowindow.setContent("<div style='width:160px; text-align: left;'>" + date.toDateString() + ", " + date.toLocaleTimeString('en-US', { hour12: false }) + "<br><b>Magnitude:</b> " + mag + " M<br><b>Depth</b>: " + depth + " km</div>");
-          MapPage.infowindow.setPosition(event.feature.getGeometry().get());
-          MapPage.infowindow.setOptions({
-              pixelOffset: new google.maps.Size(0, -5)
-          });
-          MapPage.infowindow.open(MapPage.map);
-      });
-        
+        MapPage.infowindow = new google.maps.InfoWindow();
+        var listenerHandle = MapPage.map.data.addListener('click', function(event) {
+            var date = new Date(event.feature.getProperty("time"));
+            var mag = event.feature.getProperty("mag");
+            var depth = event.feature.getProperty("depth");
+            MapPage.infowindow.setContent("<div style='width:160px; text-align: left;'>" + date.toDateString() + ", " + date.toLocaleTimeString('en-US', { hour12: false }) + "<br><b>Magnitude:</b> " + mag + " M<br><b>Depth</b>: " + depth + " km</div>");
+            MapPage.infowindow.setPosition(event.feature.getGeometry().get());
+            MapPage.infowindow.setOptions({
+                pixelOffset: new google.maps.Size(0, -5)
+            });
+            
+            MapPage.infowindow.open(MapPage.map);
+        });
     }
   
     private static blinkRecent() {
@@ -154,6 +160,7 @@ export class MapPage {
             var featureDate = new Date(feature.getProperty("time"));
             var strokeColor = 'white';
             var color;
+            var path = google.maps.SymbolPath.CIRCLE;
             if (magnitude < 3) {
                 color = '#0004FF'; //blue
             } else if (magnitude < 4) {
@@ -168,18 +175,20 @@ export class MapPage {
                 MapPage.recent.push(feature);
                 strokeColor = 'black';
             }
-      
-            return {
-              icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  fillColor: color,
-                  fillOpacity: .5,
-                  scale: 1.7 * magnitude,
-                  strokeColor: strokeColor,
-                  strokeWeight: .5
-              },
-              visible: true
-            };
+            
+            if(feature.getProperty("unid") != MapPage.unid){
+                return {
+                    icon: {
+                        path: path,
+                        fillColor: color,
+                        fillOpacity: .5,
+                        scale: 1.7 * magnitude,
+                        strokeColor: strokeColor,
+                        strokeWeight: .5
+                    },
+                    visible: true
+                };
+            }
         });
     }
   
