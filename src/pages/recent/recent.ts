@@ -32,7 +32,7 @@ export class RecentPage{
     
     showOnMap(unid){
         RecentPage.unid = unid;
-        this.navCtrl.parent.select(0);
+        this.navCtrl.parent.select(1);
     }
     
 }

@@ -10,10 +10,11 @@ import { RecentPage } from '../recent/recent';
 export class TabsPage {
     // this tells the tabs component which Pages
     // should be each tab's root Page
-    tab1Root: any = MapPage;
-    tab2Root: any = SettingsPage;
+    tab1Root: any = SettingsPage;
+    tab2Root: any = MapPage;
     tab3Root: any = RecentPage;
-  
-    constructor() {}
-}
+    
+    constructor() {
+    }
 
+}
