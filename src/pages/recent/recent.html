@@ -2,12 +2,10 @@
 
 	<ion-list>
       	<ion-item *ngFor='let earthquake of recentEarthquakes'>
-      	    <ion-badge item-left *ngIf="earthquake.properties.mag<4" color="primary">{{earthquake.properties.mag}}</ion-badge>
-      	    <ion-badge item-left *ngIf="earthquake.properties.mag>4" color="danger">{{earthquake.properties.mag}}</ion-badge>
+      	    <ion-badge item-left [color]="earthquake.properties.mag < 4 ? 'primary' : 'danger'">{{earthquake.properties.mag}}</ion-badge>
     		<h3>{{earthquake.properties.flynn_region}}</h3>
       		<p>Time: {{earthquake.properties.time | date: 'dd/MM/yyyy HH:mm'}}</p>
-      		<button item-right ion-button *ngIf="earthquake.properties.mag<4" color="primary" outline (click)="showOnMap(earthquake)">Map</button>
-      		<button item-right ion-button *ngIf="earthquake.properties.mag>4" color="danger" outline (click)="showOnMap(earthquake)">Map</button>
+      		<button item-right ion-button [color]="earthquake.properties.mag < 4 ? 'primary' : 'danger'" outline (click)="showOnMap(earthquake)">Map</button>
       	</ion-item>
 	</ion-list>
 	
