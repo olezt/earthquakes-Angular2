@@ -13,7 +13,8 @@ import { RecentPage } from '../recent/recent';
 export class MapPage {
 
     public static recent = [];
-    public static unid;
+    public static selectedEarthquake;
+    public static selectedEarthquakeMarker;
     public static rectangle;
     public static firstLoadSuccess = false;
     public static fillOpacity = 0.5;
@@ -34,12 +35,14 @@ export class MapPage {
     public static WEST = 18.748591;
 
     ionViewDidEnter() {
-        MapPage.unid = RecentPage.unid;
-        RecentPage.unid = null;
+        MapPage.selectedEarthquake = RecentPage.selectedEarthquake;
+        RecentPage.selectedEarthquake = null;
         if (MapPage.map) {
-            console.log(MapPage.unid);
             MapPage.setBounds();
             MapPage.refreshData(false);
+            if(MapPage.selectedEarthquake && MapPage.selectedEarthquake.geometry){
+                MapPage.addSelectedEarthquakeToMap();
+            }
         }
     }
 
@@ -83,8 +86,12 @@ export class MapPage {
             MapPage.blinkRecent();
         });
     }
-  
+    
     private static clearData() {
+        if(MapPage.selectedEarthquakeMarker){
+            MapPage.selectedEarthquakeMarker.setMap(null);
+            MapPage.selectedEarthquakeMarker = null;
+        }
         google.maps.event.clearListeners(MapPage.map.data, 'click');
         MapPage.infowindow = null;
         MapPage.map.data.forEach(function(feature) {
@@ -128,7 +135,42 @@ export class MapPage {
             MapPage.infowindow.open(MapPage.map);
         });
     }
-  
+    
+    private static addSelectedEarthquakeToMap(){
+       var selectedEarthquakeLatLng = {lat: MapPage.selectedEarthquake.geometry.coordinates[1], lng: MapPage.selectedEarthquake.geometry.coordinates[0]};
+        
+        MapPage.selectedEarthquakeMarker = new google.maps.Marker({
+          position: selectedEarthquakeLatLng,
+          map: MapPage.map
+        });
+        
+        MapPage.infowindow = new google.maps.InfoWindow();
+        var date = new Date(MapPage.selectedEarthquake.properties.time);
+        var mag = MapPage.selectedEarthquake.properties.mag;
+        var depth = MapPage.selectedEarthquake.properties.depth;
+        MapPage.infowindow.setContent("<div style='width:160px; text-align: left;'>" + date.toDateString() + ", " + date.toLocaleTimeString('en-US', { hour12: false }) + "<br><b>Magnitude:</b> " + mag + " M<br><b>Depth</b>: " + depth + " km</div>");
+        MapPage.infowindow.setPosition(selectedEarthquakeLatLng);
+        MapPage.infowindow.setOptions({
+            pixelOffset: new google.maps.Size(0, -5)
+        });
+
+        MapPage.infowindow.open(MapPage.map);
+        
+        MapPage.selectedEarthquakeMarker.addListener('click', function(event) {
+            MapPage.infowindow = new google.maps.InfoWindow();
+            var date = new Date(MapPage.selectedEarthquake.properties.time);
+            var mag = MapPage.selectedEarthquake.properties.mag;
+            var depth = MapPage.selectedEarthquake.properties.depth;
+            MapPage.infowindow.setContent("<div style='width:160px; text-align: left;'>" + date.toDateString() + ", " + date.toLocaleTimeString('en-US', { hour12: false }) + "<br><b>Magnitude:</b> " + mag + " M<br><b>Depth</b>: " + depth + " km</div>");
+            MapPage.infowindow.setPosition(selectedEarthquakeLatLng);
+            MapPage.infowindow.setOptions({
+                pixelOffset: new google.maps.Size(0, -5)
+            });
+
+            MapPage.infowindow.open(MapPage.map);
+        });
+    }
+    
     private static blinkRecent() {
         MapPage.blinkInterval = setInterval(function() {
             if (MapPage.recent && MapPage.recent.length > 0) {
@@ -176,7 +218,7 @@ export class MapPage {
                 strokeColor = 'black';
             }
             
-            if(feature.getProperty("unid") != MapPage.unid){
+//            if(feature.getProperty("unid") != MapPage.unid){
                 return {
                     icon: {
                         path: path,
@@ -188,7 +230,7 @@ export class MapPage {
                     },
                     visible: true
                 };
-            }
+//            }
         });
     }
   

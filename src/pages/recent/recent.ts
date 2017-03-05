@@ -16,7 +16,7 @@ import { MapPage } from '../map/map';
 export class RecentPage{
         
     recentEarthquakes: Earthquake[];
-    public static unid = "";
+    public static selectedEarthquake = {};
     constructor (public navCtrl: NavController, private recentService: RecentService) {
     }
     
@@ -30,8 +30,8 @@ export class RecentPage{
                 recentEarthquakes => this.recentEarthquakes = recentEarthquakes);
     }
     
-    showOnMap(unid){
-        RecentPage.unid = unid;
+    showOnMap(selectedEarthquake){
+        RecentPage.selectedEarthquake = selectedEarthquake;
         this.navCtrl.parent.select(1);
     }
     
